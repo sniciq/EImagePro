@@ -6,9 +6,13 @@
     <string name="hello_world">Hello world!</string>
     
     <string name="image">image</string>
+    <string name="album_name">album</string>
     
-    <string name="btn_gray">To Gray</string>
+    
+    <string name="btnCamera">btnCamera</string>
+    <string name="btnGallery">选择图片</string>
+    <string name="takepicture">拍照</string>
+    <string name="btn_gray">灰度图</string>
     <string name="btn_binarization">二值化</string>
-    
-
+    <string name="btn_test">测试</string>
 </resources>

@@ -5,7 +5,9 @@
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="com.android.toolchain.gcc.1480029401">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.android.toolchain.gcc.1480029401" moduleId="org.eclipse.cdt.core.settings" name="Default">
-				<externalSettings/>
+				<externalSettings>
+					<externalSetting/>
+				</externalSettings>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
 					<extension id="org.eclipse.cdt.core.VCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
@@ -22,35 +24,15 @@
 					<folderInfo id="com.android.toolchain.gcc.1480029401.414736472" name="/" resourcePath="">
 						<toolChain id="com.android.toolchain.gcc.855492707" name="com.android.toolchain.gcc" superClass="com.android.toolchain.gcc">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="com.android.targetPlatform.359909825" isAbstract="false" superClass="com.android.targetPlatform"/>
-							<builder id="com.android.builder.70994527" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Android Builder" superClass="com.android.builder">
-								<outputEntries>
-									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="obj"/>
-									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="libs"/>
-								</outputEntries>
-							</builder>
+							<builder id="com.android.builder.70994527" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Android Builder" superClass="com.android.builder"/>
 							<tool id="com.android.gcc.compiler.1828161701" name="Android GCC Compiler" superClass="com.android.gcc.compiler">
-								<option id="com.android.gcc.option.includePath.1036816676" superClass="com.android.gcc.option.includePath" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;D:\android-ndk-r8e\platforms\android-14\arch-arm\usr\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;D:\android-ndk-r8e\platforms\android-14\arch-arm\usr\lib&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;D:\android-ndk-r8e\sources\android\cpufeatures&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;D:\android-ndk-r8e\toolchains\arm-linux-androideabi-4.4.3\prebuilt\windows\lib\gcc\arm-linux-androideabi\4.4.3\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;D:\android-ndk-r8e\sources\cxx-stl\gnu-libstdc++\4.4.3\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;D:\android-ndk-r8d\platforms\android-14\arch-arm\usr\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\cygwin\lib\gcc\i686-pc-cygwin\4.5.3\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\cygwin\lib\gcc\i686-pc-cygwin\4.5.3\include\c++&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\cygwin\lib\gcc\i686-pc-cygwin\4.5.3\include\c++\backward&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\cygwin\lib\gcc\i686-pc-cygwin\4.5.3\include\c++\i686-pc-cygwin&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\cygwin\lib\gcc\i686-pc-cygwin\4.5.3\include-fixed&quot;"/>
+								<option id="com.android.gcc.option.includePath.2097587220" superClass="com.android.gcc.option.includePath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;C:\cygwin\usr\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\cygwin\usr\include\w32api&quot;"/>
 								</option>
 								<inputType id="com.android.gcc.inputType.361004177" superClass="com.android.gcc.inputType"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
-					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="jni"/>
-					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>

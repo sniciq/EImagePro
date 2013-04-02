@@ -15,7 +15,7 @@ public class ImageProcessor {
 	 * 二值化
 	 * @param sourceBitap
 	 */
-	public native void binarizationImage(Bitmap bitmap);
+	public native void binarizationImage(Bitmap bitmap, Bitmap destBitmap);
 	
 	static {
 		System.loadLibrary("EImagePro");

@@ -9,16 +9,27 @@
     android:orientation="vertical"
     tools:context=".MainActivity" >
 
-    <ImageView 
-        android:id="@+id/imageView"
-        android:src="@drawable/mt"
-        android:layout_width="wrap_content"
+    <LinearLayout 
         android:layout_height="wrap_content"
+        android:layout_width="match_parent" 
+        android:orientation="horizontal">
+        <Button  
+            android:id="@+id/btnGallery"
+            android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+            android:text="@string/btnGallery"
+            android:contentDescription="@string/btnGallery"
+            android:onClick="openGallery"
+            />
+        <Button  
+            android:id="@+id/btnCamera"
+            android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+            android:text="@string/takepicture"
+            android:contentDescription="@string/btnCamera"
+            android:onClick="takePicture"
+            />
         
-        android:contentDescription="@string/image"
-        />
-    
-    <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal">
         <Button 
 	        android:id="@+id/btn_gray"
 	        android:layout_width="wrap_content"
@@ -35,5 +46,39 @@
 	        android:onClick="binarizationImage"
 	        />
     </LinearLayout>
+    
+    <LinearLayout 
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent" 
+        android:orientation="horizontal">
+        <Button 
+	        android:id="@+id/btn_lpls"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="拉普拉斯"
+	        android:onClick="lpls"
+	        />
+        
+        <Button 
+	        android:id="@+id/btn_test"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/btn_test"
+	        android:onClick="test"
+	        />
+        
+        
+    </LinearLayout>
+    
+     <ImageView 
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+        android:visibility="visible"
+        android:id="@+id/imageView"
+        android:src="@drawable/mt2"
+        android:contentDescription="@string/image"
+        />
+    
     
 </LinearLayout>

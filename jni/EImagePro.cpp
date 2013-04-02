@@ -1,7 +1,7 @@
 #include <jni.h>
+#include <string.h>
 #include <android/bitmap.h>
 #include <android/log.h>
-#include <iostream>
 #include "com_eddy_eimagepro_core_ImageProcessor.h"
 
 int otsu(uint32_t* colors, int w, int h);
@@ -66,9 +66,11 @@ void JNICALL Java_com_eddy_eimagepro_core_ImageProcessor_grayImage
 /**
  * 二值化图像
  */
-void Java_com_eddy_eimagepro_core_ImageProcessor_binarizationImage(JNIEnv * env, jobject thiz, jobject sBitmap) {
+void Java_com_eddy_eimagepro_core_ImageProcessor_binarizationImage(JNIEnv * env, jobject thiz, jobject sBitmap, jobject destBitmap) {
 	AndroidBitmapInfo infocolor;
 	void* pixelscolor;
+	AndroidBitmapInfo infodest;
+	void* pixelsdest;
 	int ret = 0;
 	if((ret = AndroidBitmap_getInfo(env, sBitmap, &infocolor)) < 0) {
 		__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "AndroidBitmap_getInfo fail!");
@@ -83,31 +85,61 @@ void Java_com_eddy_eimagepro_core_ImageProcessor_binarizationImage(JNIEnv * env,
 		return;
 	}
 
+	if((ret = AndroidBitmap_getInfo(env, destBitmap, &infodest)) < 0) {
+		__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "AndroidBitmap_getInfo fail!");
+		return;
+	}
+	if (infodest.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
+		__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "Bitmap format is not RGBA_8888");
+		return;
+	}
+	if((ret = AndroidBitmap_lockPixels(env, destBitmap, &pixelsdest) ) < 0) {
+		__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "AndroidBitmap_lockPixels fail!");
+		return;
+	}
+
 	int w = infocolor.width;
 	int h = infocolor.height;
 
 	int white = 0xFFFFFFFF; // 不透明白色
 	int black = 0xFF000000; // 不透明黑色
 	uint32_t *rgbData = (uint32_t *) pixelscolor;
-	int thresh = otsu(rgbData, w, h); // OTSU获取分割阀值
-	__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "thresh: %d", thresh);
-	int x, y, gray;
-	for (y = 0; y < h; y++) {
-		for (x = 0; x < w; x++) {
+	uint32_t *destData = (uint32_t *) pixelsdest;
+
+	//灰度化
+	int alpha = (int) (0xFF << 24);
+	for(int y = 0; y < h; y++) {
+		for(int x = 0; x < w; x++) {
 			int color = (int) rgbData[w * y + x];
 			int red = (int) ((color & 0x00FF0000) >> 16);
 			int green = (int) ((color & 0x0000FF00) >> 8);
 			int blue = (int) (color & 0x000000FF);
-			gray = (int)(red * 38 + green * 75 + blue * 15) >> 7;
+			color = (red * 38 + green * 75 + blue * 15) >> 7;
+			color = alpha | (color << 16) | (color << 8) | color;
+			destData[y * w + x] = 0xff000000 | (color) | (color << 8) | (color << 16);
+		}
+	}
+
+	// OTSU获取分割阀值
+	int thresh = otsu(destData, w, h);
+
+	__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "thresh: %d", thresh);
+
+	//二值化
+	int x, y, gray;
+	for (y = 0; y < h; y++) {
+		for (x = 0; x < w; x++) {
+			gray = (int)(destData[w * y + x] & 0xFF); // 获得灰度值（red=green=blue
 			if(gray < thresh) {
-				rgbData[y * w + x] = black;
+				destData[y * w + x] = black;
 			} else {
-				rgbData[y * w + x] = white;
+				destData[y * w + x] = white;
 			}
 		}
 	}
 
 	AndroidBitmap_unlockPixels(env, sBitmap);
+	AndroidBitmap_unlockPixels(env, destBitmap);
 	__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "Binarization image over!");
 }
 
@@ -128,11 +160,7 @@ int otsu(uint32_t* rgbData, int w, int h) {
     int x, y, gray;
 	for (y = 0; y < h; y++) {
 		for (x = 0; x < w; x++) {
-			int color = (int) rgbData[w * y + x];
-			int red = (int) ((color & 0x00FF0000) >> 16);
-			int green = (int) ((color & 0x0000FF00) >> 8);
-			int blue = (int) (color & 0x000000FF);
-			gray = (int)(red * 38 + green * 75 + blue * 15) >> 7;
+			gray = (int) ((rgbData[w * y + x]) & 0xFF); // 获得灰度值
 			pixelNum[gray]++;
 		}
 	}

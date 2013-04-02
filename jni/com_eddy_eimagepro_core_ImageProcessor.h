@@ -21,7 +21,7 @@ JNIEXPORT void JNICALL Java_com_eddy_eimagepro_core_ImageProcessor_grayImage
  * Signature: (Landroid/graphics/Bitmap;)V
  */
 JNIEXPORT void JNICALL Java_com_eddy_eimagepro_core_ImageProcessor_binarizationImage
-  (JNIEnv *, jobject, jobject);
+  (JNIEnv *, jobject, jobject, jobject);
 
 #ifdef __cplusplus
 }
