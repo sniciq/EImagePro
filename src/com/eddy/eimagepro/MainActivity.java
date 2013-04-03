@@ -137,22 +137,12 @@ public class MainActivity extends Activity {
 		imageView.setImageBitmap(rBitmap);
 	}
 	
-	//拉普拉斯边缘检测
 	public void lpls(View v) {
-		ColorMatrix bwMatrix = new ColorMatrix(new float[]{-2, -4, -4, -4, -2,
-                -4, 0, 8, 0, 4,
-                -4, 8, 24, 8, -4,
-                -4, 0, 8, 0, -4,
-                -2, -4, -4, -4, -2
-                });
-		bwMatrix.setSaturation(0);
-		
-		final ColorMatrixColorFilter colorFilter= new ColorMatrixColorFilter(bwMatrix);
 		Bitmap rBitmap = currentBitmap.copy(Bitmap.Config.ARGB_8888, true);
-		Paint paint=new Paint();
-		paint.setColorFilter(colorFilter);
-		Canvas myCanvas =new Canvas(rBitmap);
-		myCanvas.drawBitmap(rBitmap, 0, 0, paint);
+		
+		int[][] bi = ImageProcessor.createBinaryImage(rBitmap);
+		
+//		Bitmap bb = Bitmap.createBitmap(bi, rBitmap.getWidth(), rBitmap.getHeight(), Bitmap.Config.ARGB_8888);
 		imageView.setImageBitmap(rBitmap);
 	}
 	
