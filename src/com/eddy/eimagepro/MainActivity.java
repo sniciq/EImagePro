@@ -26,12 +26,14 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.eddy.eimagepro.core.ImageProcessor;
+import com.eddy.eimagepro.core.ImageProcessor_java;
 
 public class MainActivity extends Activity {
 	private ImageView imageView;
 	private Bitmap tempBitmap;
 	private Bitmap destBitmap;
 	private ImageProcessor imageProcessor;
+	private ImageProcessor_java imageProcessor_java;
 	
 	private String mCurrentPhotoPath;
 	private Bitmap currentBitmap = null;
@@ -48,6 +50,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		imageView = (ImageView) findViewById(R.id.imageView);
 		imageProcessor = new ImageProcessor();
+		imageProcessor_java = new ImageProcessor_java();
 		
 		currentBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mt2);
 		
@@ -99,9 +102,11 @@ public class MainActivity extends Activity {
 			}
 		}
 		else if(requestCode == actionCode_openGallery) {
-			Uri uri = data.getData();
-			System.out.println(getRealPathFromURI(uri));
-			setPic(getRealPathFromURI(uri));
+			if (resultCode == RESULT_OK) {  
+				Uri uri = data.getData();
+				System.out.println(getRealPathFromURI(uri));
+				setPic(getRealPathFromURI(uri));
+			}
 		}
 	}
 	
@@ -137,13 +142,25 @@ public class MainActivity extends Activity {
 		imageView.setImageBitmap(rBitmap);
 	}
 	
-	public void lpls(View v) {
+	/**
+	 * JAVA实现二值化
+	 * @param v
+	 */
+	public void javaBinary(View v) {
 		Bitmap rBitmap = currentBitmap.copy(Bitmap.Config.ARGB_8888, true);
-		
-		int[][] bi = ImageProcessor.createBinaryImage(rBitmap);
-		
-//		Bitmap bb = Bitmap.createBitmap(bi, rBitmap.getWidth(), rBitmap.getHeight(), Bitmap.Config.ARGB_8888);
-		imageView.setImageBitmap(rBitmap);
+		Bitmap rBitMao = imageProcessor_java.binarization(rBitmap);
+		imageView.setImageBitmap(rBitMao);
+	}
+	
+	/**
+	 * 新二值化
+	 * @param v
+	 */
+	public void binarizationImageNew(View v) {
+		tempBitmap = currentBitmap.copy(Bitmap.Config.ARGB_8888, true);
+		destBitmap = currentBitmap.copy(Bitmap.Config.ARGB_8888, true);
+		imageProcessor.binarizationImageNew(tempBitmap, destBitmap);
+		imageView.setImageBitmap(destBitmap);
 	}
 	
 	public String getRealPathFromURI(Uri contentUri) {

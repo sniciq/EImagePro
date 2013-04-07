@@ -23,6 +23,10 @@ JNIEXPORT void JNICALL Java_com_eddy_eimagepro_core_ImageProcessor_grayImage
 JNIEXPORT void JNICALL Java_com_eddy_eimagepro_core_ImageProcessor_binarizationImage
   (JNIEnv *, jobject, jobject, jobject);
 
+JNIEXPORT void JNICALL Java_com_eddy_eimagepro_core_ImageProcessor_binarizationImageNew
+  (JNIEnv *, jobject, jobject, jobject);
+
+
 #ifdef __cplusplus
 }
 #endif

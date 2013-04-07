@@ -51,12 +51,21 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent" 
         android:orientation="horizontal">
+        
         <Button 
 	        android:id="@+id/btn_lpls"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:text="拉普拉斯"
-	        android:onClick="lpls"
+	        android:text="大律法二值化"
+	        android:onClick="binarizationImageNew"
+	        />
+        
+        <Button 
+	        android:id="@+id/btn_lpls"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="JAVA二值化"
+	        android:onClick="javaBinary"
 	        />
         
         <Button 

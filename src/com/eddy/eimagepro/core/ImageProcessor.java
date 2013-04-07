@@ -17,6 +17,8 @@ public class ImageProcessor {
 	 */
 	public native void binarizationImage(Bitmap bitmap, Bitmap destBitmap);
 	
+	public native void binarizationImageNew(Bitmap bitmap, Bitmap destBitmap);
+	
 	static {
 		System.loadLibrary("EImagePro");
 	}
