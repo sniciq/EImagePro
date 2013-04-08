@@ -5,6 +5,7 @@
 #include "com_eddy_eimagepro_core_ImageProcessor.h"
 
 int otsu(uint32_t* colors, int w, int h);
+int ** initArray(int height, int width);
 
 void JNICALL Java_com_eddy_eimagepro_core_ImageProcessor_grayImage
   (JNIEnv * env, jobject thiz, jobject sBitmap, jobject destBitmap) {
@@ -105,10 +106,9 @@ void Java_com_eddy_eimagepro_core_ImageProcessor_binarizationImageNew(JNIEnv * e
 	int height = infocolor.height;
 
 	int area = width * height;
-//	int gray[][] = new int[width][height];
-
 	__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "WW:%d, HH:%d", width, height);
-	int gray[width][height];
+	int ** gray = initArray(width, height);
+	__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "declare array over!", width, height);
 
 	int average = 0;// 灰度平均值
 	int graysum = 0;
@@ -131,7 +131,7 @@ void Java_com_eddy_eimagepro_core_ImageProcessor_binarizationImageNew(JNIEnv * e
 			graysum += pixelGray;
 		}
 	}
-	__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "整个图的灰度平均值");
+	__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "计算灰度完成");
 
 	graymean = (int) (graysum / area);// 整个图的灰度平均值
 	average = graymean;
@@ -152,7 +152,6 @@ void Java_com_eddy_eimagepro_core_ImageProcessor_binarizationImageNew(JNIEnv * e
 
 	int frontvalue = (int) (grayfrontmean / front);// 前景中心
 	int backvalue = (int) (graybackmean / back);// 背景中心
-//	float G[] = new float[frontvalue - backvalue + 1];// 方差数组
 	float G[frontvalue - backvalue + 1];
 	int s = 0;
 	__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "Front: %d, Frontvalue:%d, Backvalue: %d", front, frontvalue, backvalue);
@@ -179,6 +178,7 @@ void Java_com_eddy_eimagepro_core_ImageProcessor_binarizationImageNew(JNIEnv * e
 		G[s] = (((float) back / area) * (graybackmean - average) * (graybackmean - average) + ((float) front / area) * (grayfrontmean - average) * (grayfrontmean - average));
 		s++;
 	}
+	__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "DDDDDDDDDDDDDDDD");
 
 	float max = G[0];
 	int index = 0;
@@ -202,8 +202,12 @@ void Java_com_eddy_eimagepro_core_ImageProcessor_binarizationImageNew(JNIEnv * e
 
 	AndroidBitmap_unlockPixels(env, sBitmap);
 	AndroidBitmap_unlockPixels(env, destBitmap);
-	__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "Binarization image over!");
+	for(int index = 0; index < width; index++) {
+	    delete [] gray[index];
+	}
+	delete [] gray;
 
+	__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "Binarization image over!");
 }
 
 /**
@@ -250,6 +254,7 @@ void Java_com_eddy_eimagepro_core_ImageProcessor_binarizationImage(JNIEnv * env,
 	uint32_t *destData = (uint32_t *) pixelsdest;
 
 	//灰度化
+	int ** grayArr = initArray(w, h);
 	int alpha = (int) (0xFF << 24);
 	for(int y = 0; y < h; y++) {
 		for(int x = 0; x < w; x++) {
@@ -259,12 +264,13 @@ void Java_com_eddy_eimagepro_core_ImageProcessor_binarizationImage(JNIEnv * env,
 			int blue = (int) (color & 0x000000FF);
 			color = (red * 38 + green * 75 + blue * 15) >> 7;
 			color = alpha | (color << 16) | (color << 8) | color;
-			destData[y * w + x] = 0xff000000 | (color) | (color << 8) | (color << 16);
+			grayArr[x][y] = 0xff000000 | (color) | (color << 8) | (color << 16);
+//			gray[y * w + x] = 0xff000000 | (color) | (color << 8) | (color << 16);
 		}
 	}
 
 	// OTSU获取分割阀值
-	int thresh = otsu(destData, w, h);
+	int thresh = otsu(grayArr, w, h);
 
 	__android_log_print(ANDROID_LOG_INFO, "JNIMsg", "thresh: %d", thresh);
 
@@ -289,7 +295,7 @@ void Java_com_eddy_eimagepro_core_ImageProcessor_binarizationImage(JNIEnv * env,
 /**
  * OTSU算法求最适分割阈值
  */
-int otsu(uint32_t* rgbData, int w, int h) {
+int otsu(int ** grayArr, int w, int h) {
     unsigned int pixelNum[256]; // 图象灰度直方图[0, 255]
     int n, n0, n1; //  图像总点数，前景点数， 后景点数（n0 + n1 = n）
     int w0, w1; // 前景所占比例， 后景所占比例（w0 = n0 / n, w0 + w1 = 1）
@@ -303,7 +309,7 @@ int otsu(uint32_t* rgbData, int w, int h) {
     int x, y, gray;
 	for (y = 0; y < h; y++) {
 		for (x = 0; x < w; x++) {
-			gray = (int) ((rgbData[w * y + x]) & 0xFF); // 获得灰度值
+			gray = (int) ((grayArr[x][y]) & 0xFF); // 获得灰度值
 			pixelNum[gray]++;
 		}
 	}
@@ -341,5 +347,15 @@ int otsu(uint32_t* rgbData, int w, int h) {
     }
 
     return thresh;
+}
+
+int ** initArray(int width, int height){
+   int ** gray = new int *[width];
+   for (unsigned int i = 0; i < width; ++i)
+   {
+	  gray[i] = new int[height];
+   }
+
+   return gray;
 }
 

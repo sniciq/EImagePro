@@ -18,14 +18,18 @@ JNIEXPORT void JNICALL Java_com_eddy_eimagepro_core_ImageProcessor_grayImage
 /*
  * Class:     com_eddy_eimagepro_core_ImageProcessor
  * Method:    binarizationImage
- * Signature: (Landroid/graphics/Bitmap;)V
+ * Signature: (Landroid/graphics/Bitmap;Landroid/graphics/Bitmap;)V
  */
 JNIEXPORT void JNICALL Java_com_eddy_eimagepro_core_ImageProcessor_binarizationImage
   (JNIEnv *, jobject, jobject, jobject);
 
+/*
+ * Class:     com_eddy_eimagepro_core_ImageProcessor
+ * Method:    binarizationImageNew
+ * Signature: (Landroid/graphics/Bitmap;Landroid/graphics/Bitmap;[[I)V
+ */
 JNIEXPORT void JNICALL Java_com_eddy_eimagepro_core_ImageProcessor_binarizationImageNew
   (JNIEnv *, jobject, jobject, jobject);
-
 
 #ifdef __cplusplus
 }
