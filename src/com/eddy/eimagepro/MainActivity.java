@@ -1,7 +1,7 @@
 package com.eddy.eimagepro;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
@@ -24,6 +25,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.eddy.eimagepro.core.ImageProcessor;
 import com.eddy.eimagepro.core.ImageProcessor_java;
@@ -79,24 +81,27 @@ public class MainActivity extends Activity {
 	
 	public void takePicture(View v) {
 		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		File f = null;
+		File imageF = null;
 		try {
-			f = setUpPhotoFile();
-			mCurrentPhotoPath = f.getAbsolutePath();
-			takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+			String timeStamp = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(new Date());
+			String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
+			File albumF = getAlbumDir();
+			imageF = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX, albumF);
+			mCurrentPhotoPath = imageF.getAbsolutePath();
+			takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageF));
 			startActivityForResult(takePictureIntent, actionCode_takePicture);
 		} catch (Exception e) {
 			e.printStackTrace();
-			f = null;
+			imageF = null;
 		}
 	}
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == actionCode_takePicture) {
-			if (mCurrentPhotoPath != null) {
+			if (resultCode == RESULT_OK && mCurrentPhotoPath != null) {
 				setPic(mCurrentPhotoPath);
-				galleryAddPic();
+				galleryAddPic(mCurrentPhotoPath);
 				System.out.println(mCurrentPhotoPath);
 				mCurrentPhotoPath = null;
 			}
@@ -142,6 +147,23 @@ public class MainActivity extends Activity {
 		imageView.setImageBitmap(rBitmap);
 	}
 	
+	public void save(View v) {
+		if(destBitmap == null)
+			return;
+		try {
+			String timeStamp = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(new Date());
+			String imageFileName = "IMG_" + timeStamp + "_";
+			File albumF = getAlbumDir();
+			File imageF = File.createTempFile(imageFileName, ".jpg", albumF);
+			destBitmap.compress(CompressFormat.JPEG, 100, new FileOutputStream(imageF));
+			galleryAddPic(imageF.getPath());
+			Toast.makeText(this, "图像成功保存到相册 " + getString(R.string.album_name), Toast.LENGTH_LONG).show();
+		} catch(Exception e) {
+			Toast.makeText(this, "图像保存失败!", Toast.LENGTH_LONG).show();
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * JAVA实现二值化
 	 * @param v
@@ -171,9 +193,9 @@ public class MainActivity extends Activity {
 		return mImageCursor.getString(column_index);
 	}
 	
-	private void galleryAddPic() {
+	private void galleryAddPic(String path) {
 		Intent mediaScanIntent = new Intent("android.intent.action.MEDIA_SCANNER_SCAN_FILE");
-		File f = new File(mCurrentPhotoPath);
+		File f = new File(path);
 		Uri contentUri = Uri.fromFile(f);
 		mediaScanIntent.setData(contentUri);
 		this.sendBroadcast(mediaScanIntent);
@@ -200,15 +222,6 @@ public class MainActivity extends Activity {
 		Bitmap bitmap = BitmapFactory.decodeFile(filepath, bmOptions);
 		currentBitmap = BitmapFactory.decodeFile(filepath);
 		imageView.setImageBitmap(bitmap);
-	}
-	
-	private File setUpPhotoFile() throws IOException {
-		String timeStamp = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(new Date());
-		String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
-		File albumF = getAlbumDir();
-		File imageF = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX, albumF);
-		mCurrentPhotoPath = imageF.getAbsolutePath();
-		return imageF;
 	}
 	
 	private File getAlbumDir() {
